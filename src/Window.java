@@ -25,7 +25,6 @@ public class Window {
         //displayPanel.setLayout(null);
         //TEXT FIELD
         JTextField importo = new JTextField("Importo");
-
         importo.setSize(50,50);
         displayPanel.add(importo);
         JTextField numero_conto = new JTextField("Numero Conto");
@@ -69,7 +68,7 @@ public class Window {
         });
         buttonTextField3.addActionListener(e -> {
                     conti.printAllBalance();
-                    bilancioConto.setText("Bilancio totale: " + String.valueOf(conti.getAllBalance()));
+                    bilancioTotale.setText("Bilancio totale: " + String.valueOf(conti.getAllBalance()));
 
                 }
         );
@@ -82,11 +81,8 @@ public class Window {
         );
         buttonTextField5.addActionListener(e -> {
             conti.printNumberDeposit();
-            numeroPrelieviLabel.setText("Depositi: " + String.valueOf(conti.getNumeroDepositi()));
-
+            numeroDepositiLabel.setText("Depositi: " + String.valueOf(conti.getNumeroDepositi()));
         }
-
-
         );
         buttonTextField6.addActionListener(e -> {
                     conti.printNumberPrelievi();
@@ -94,8 +90,6 @@ public class Window {
 
                 }
         );
-
-
         displayPanel.add(buttonTextField);
         displayPanel.add(buttonTextField2);
         displayPanel.add(buttonTextField3);
