@@ -1,51 +1,72 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Window {
     BankAccount conti = new BankAccount();
-    int ALTEZZA = 600;
-    int LARGHEZZA = 400;
+    final int ALTEZZA = 600;
+    final int LARGHEZZA = 400;
+
     /*Gestione dell'interfaccia grafica*/
     public Window(){
-        JFrame finestra = new JFrame("BANCOMAT ATM");
+        JFrame finestra = new JFrame("BANCOMAT EXCERCISE");
 
         finestra.setBounds(0,0,LARGHEZZA,ALTEZZA);
         finestra.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Chiudere finestra
-        finestra.setLayout(new BorderLayout());
+        finestra.setResizable(false);
         // PANEL
         JPanel displayPanel = new JPanel();
-        displayPanel.setBounds(0,0,LARGHEZZA,ALTEZZA);
+        JPanel numericPanel = new JPanel();
+        JPanel informationPanel = new JPanel();
+        //displayPanel.setBounds(0,0,LARGHEZZA,ALTEZZA);
+        finestra.setLayout(new BorderLayout());
         displayPanel.setBackground(new Color(23,75,120)); //RGB
-        finestra.add(displayPanel);
-        //LABEL
+        finestra.add(displayPanel,BorderLayout.NORTH);
+        finestra.add(numericPanel, BorderLayout.CENTER);
+        finestra.add(informationPanel,BorderLayout.SOUTH);
+        numericPanel.setLayout(new GridLayout(4,3));
+        numericPanel.setBackground(new Color(23,75,120)); //RGB
+        informationPanel.setLayout(new GridLayout(4,1));
+        informationPanel.setBackground(new Color(23,75,120)); //RGB
 
-        displayPanel.setLayout(new GridLayout(5,2));
+        ArrayList<String> choiseCount = new ArrayList<>();
+        //Tasti da 0 a 9
+        JButton [] buttons = new JButton[10];
+        JButton cancelButton = new JButton("Cancel");
+        JButton depositButton = new JButton("Deposita");
+        JButton prelevaButton = new JButton("Preleva");
+        JButton buttonCambioValuta = new JButton("Cambio valuta");
+        JLabel schermataImporto = new JLabel();
+        schermataImporto.setForeground(Color.WHITE);
 
-        //displayPanel.setLayout(null);
-        //TEXT FIELD
-        JTextField importo = new JTextField("Importo");
-        importo.setSize(50,50);
-        displayPanel.add(importo);
-        JTextField numero_conto = new JTextField("Numero Conto");
-        importo.setSize(50,50);
-        displayPanel.add(numero_conto);
 
-        //Button
-        JButton buttonTextField = new JButton("Deposita");
-        buttonTextField.setForeground(new Color(0,95,182));
-        JButton buttonTextField2 = new JButton("Preleva");
-        buttonTextField2.setForeground(new Color(0,95,182));
-        JButton buttonTextField3 = new JButton("Visualizza tutto il bilancio della banca");
-        buttonTextField3.setForeground(new Color(0,95,182));
-        JButton buttonTextField4 = new JButton("Visualizza bilancio del conto");
-        buttonTextField4.setForeground(new Color(0,95,182));
-        JButton buttonTextField5 = new JButton("Visualizza numero depositi");
-        buttonTextField5.setForeground(new Color(0,95,182));
-        JButton buttonTextField6 = new JButton("Visualizza numero prelievi");
-        buttonTextField6.setForeground(new Color(0,95,182));
+        for(int i=0;i<=9;i++){
+            choiseCount.add(String.valueOf(i));
+            buttons[i] = new JButton(choiseCount.get(i));
+            numericPanel.add(buttons[i]);
+            final int tmp = i;
+            buttons[i].addActionListener(e-> schermataImporto.setText(schermataImporto.getText() + String.valueOf(tmp)));
+        }
+        //Selezione del Conto Corrente
+        JLabel sceltaConto = new JLabel("Conto numero: ");
+        sceltaConto.setForeground(Color.WHITE);
+        JComboBox boxList = new JComboBox(choiseCount.toArray());
+        displayPanel.add(sceltaConto);
+        displayPanel.add(boxList);
+
+        /* Bottoni EXTRA */
+        cancelButton.addActionListener(e-> schermataImporto.setText(""));
+        numericPanel.add(buttonCambioValuta);
+        numericPanel.add(depositButton);
+        numericPanel.add(prelevaButton);
+        numericPanel.add(cancelButton);
+        numericPanel.add(cancelButton);
+        displayPanel.add(schermataImporto);
 
         //Numero Prelievi
+
+
         JLabel bilancioConto = new JLabel("Bilancio : ");
         bilancioConto.setForeground(Color.WHITE);
         JLabel bilancioTotale = new JLabel("Bilancio Totale : ");
@@ -56,50 +77,36 @@ public class Window {
         numeroPrelieviLabel.setForeground(Color.WHITE);
 
 
-        buttonTextField.addActionListener(e ->
-        {
-            conti.deposita(Integer.parseInt(numero_conto.getText()),Double.parseDouble(importo.getText()));
+        informationPanel.add(bilancioConto);
+        informationPanel.add(bilancioTotale);
+        informationPanel.add(numeroDepositiLabel);
+        informationPanel.add(numeroPrelieviLabel);
 
+        buttonCambioValuta.addActionListener(e->{
+            bilancioTotale.setText("Bilancio totale: "+ String.valueOf(conti.convertiValuta(conti.getAllBalance())) + "$");
+            bilancioConto.setText("Bilancio : " + String.valueOf(conti.convertiValuta(conti.getBalance(boxList.getSelectedIndex()))) + "$");
         });
 
-        buttonTextField2.addActionListener(e ->
+        depositButton.addActionListener(e ->
         {
-            conti.preleva(Integer.parseInt(numero_conto.getText()),Double.parseDouble(importo.getText()));
-        });
-        buttonTextField3.addActionListener(e -> {
-                    conti.printAllBalance();
-                    bilancioTotale.setText("Bilancio totale: " + String.valueOf(conti.getAllBalance()));
-
-                }
-        );
-        buttonTextField4.addActionListener(e ->
-                {
-                    conti.printSingleBalance(Integer.parseInt(numero_conto.getText()));
-                    bilancioConto.setText("Bilancio : " + String.valueOf(conti.getBalance(Integer.parseInt(numero_conto.getText()))));
-
-                }
-        );
-        buttonTextField5.addActionListener(e -> {
-            conti.printNumberDeposit();
+            conti.deposita(boxList.getSelectedIndex(),Double.parseDouble(schermataImporto.getText()));
             numeroDepositiLabel.setText("Depositi: " + String.valueOf(conti.getNumeroDepositi()));
-        }
-        );
-        buttonTextField6.addActionListener(e -> {
-                    conti.printNumberPrelievi();
-                    numeroPrelieviLabel.setText("Prelievi: " + String.valueOf(conti.getNumeroPrelievi()));
+            bilancioConto.setText("Bilancio : " + String.valueOf(conti.getBalance(boxList.getSelectedIndex())));
+            bilancioTotale.setText("Bilancio totale: "+ String.valueOf(conti.getAllBalance()));
+            schermataImporto.setText("");
 
-                }
-        );
-        displayPanel.add(buttonTextField);
-        displayPanel.add(buttonTextField2);
-        displayPanel.add(buttonTextField3);
-        displayPanel.add(buttonTextField4);
-        displayPanel.add(buttonTextField5);
-        displayPanel.add(buttonTextField6);
-        displayPanel.add(bilancioConto);
-        displayPanel.add(bilancioTotale);
-        displayPanel.add(numeroDepositiLabel);
-        displayPanel.add(numeroPrelieviLabel);
+
+        });
+
+        prelevaButton.addActionListener(e ->
+        {
+            conti.preleva(boxList.getSelectedIndex(),Double.parseDouble(schermataImporto.getText()));
+            numeroPrelieviLabel.setText("Prelievi: " + String.valueOf(conti.getNumeroPrelievi()));
+            bilancioConto.setText("Bilancio : " + String.valueOf(conti.getBalance(boxList.getSelectedIndex())));
+            bilancioTotale.setText("Bilancio totale: "+ String.valueOf(conti.getAllBalance()));
+            schermataImporto.setText("");
+        });
+
         finestra.setVisible(true);
 
     }

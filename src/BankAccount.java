@@ -12,6 +12,8 @@ public class BankAccount {
     private final double tassoDollaro = 0.97;
     private int numeroConto = 1000000000;
 
+    private boolean dollaro = false;
+
     public void deposita(int indice, double valore){
         contaDepositi++;
         contiCorrenti[indice].balance += valore;
@@ -33,9 +35,19 @@ public class BankAccount {
             }
         }
     }
-    public void convertiValuta(double valore){
+    public double convertiValuta(double valore){
         df.setRoundingMode(RoundingMode.UP);
         System.out.println("Il valore in dollari è uguale a " + df.format(valore*tassoDollaro) + "$");
+        if(dollaro == false){
+            dollaro = true;
+            System.out.println("Da euro a dollaro");
+            return valore*tassoDollaro;
+        } else {
+            dollaro = false;
+            System.out.println("Da dollaro a euro");
+            return valore/tassoDollaro;
+
+        }
     }
 
     //GETTER
